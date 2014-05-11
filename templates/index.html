@@ -27,7 +27,10 @@ $for i in form.inputs:
 	<div class="form-group ${errorclass(i)}">
 		<div class="col-xs-4">
 		<input type="${inputtype(i)}" class="form-control input-lg" name="$i.name" id="$i.id" value="$i.value" placeholder="$i.description">
-		$if i.note: <span class="help-block">${getnote(i)}</span>
+		$if i.note:
+			<span class="help-block">${getnote(i)}</span>
+		$elif i.id == 'email':
+			<span class="help-block">La dirección debe coincidir con la que anotaste para la lista de correo.</span>
 		</div>
  	</div>
 <div class="form-group">

@@ -4,11 +4,12 @@
 import gdata.spreadsheet.service
 import itertools
 import collections
+import os
 
 # para configurar desde afuera
-account = 'aaa@gmail.com'
-password = '12345'
-spreadsheet_key = '***'
+account = os.environ['NOTAS_ACCOUNT']
+password = os.environ['NOTAS_PASSWORD']
+spreadsheet_key = os.environ['NOTAS_SPREADSHEET_KEY']
 
 def worksheet_dict(feed):
 	d = {}
@@ -31,22 +32,35 @@ def get_row_data(row, keys):
 		data[keys[i]] = cell.cell.text
 	return data
 
-def get_feed():
-	gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-	gd_client.email = account
-	gd_client.password = password
-	gd_client.source = u'Notas'
-	gd_client.ProgrammaticLogin()
+def connect():
+	client = gdata.spreadsheet.service.SpreadsheetsService()
+	client.email = account
+	client.password = password
+	client.source = u'Notas'
+	client.ProgrammaticLogin()
+	return client
 
-	#worksheets = worksheet_dict(gd_client.GetWorksheetsFeed(spreadsheet_key))
-	#worksheet_id = worksheets[u'Notas']
-	# The first worksheet is always od6
-	worksheet_id = 'od6'
+def worksheet_id(client, worksheet_name):
+	worksheets = worksheet_dict(client.GetWorksheetsFeed(spreadsheet_key))
+	return worksheets[worksheet_name]
 
-	return gd_client.GetCellsFeed(spreadsheet_key, worksheet_id).entry
+def GetListFeed(worksheet_name):
+	client = connect()
+	return client.GetListFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
+
+def GetCellsFeed(worksheet_name):
+	client = connect()
+	return client.GetCellsFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
+
+def verificar(padron, email):
+	rows = GetListFeed(u'DatosAlumnos')
+	for row in rows:
+		if row.custom[u'padrón'].text == padron and row.custom[u'email'].text.lower() == email.lower():
+			return True
+	return False
 
 def notas(padron):
-	cells = get_feed()
+	cells = GetCellsFeed(u'Notas')
 	keys = None
 	PADRON = 'Padrón'
 	for _, row in itertools.groupby(cells, lambda cell: cell.cell.row):
@@ -61,5 +75,5 @@ def notas(padron):
 	raise IndexError(u'Padrón %s no encontrado' % padron)
 
 if __name__ == '__main__':
-	print notas('942039')
+	print verificar('942039', 'aaa')
 

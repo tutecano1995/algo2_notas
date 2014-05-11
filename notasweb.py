@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 import web
+import os
 from web import form
 from email.utils import parseaddr
 import hashlib
@@ -9,11 +10,7 @@ import hashlib
 import notas
 import sendmail
 
-notas.account = sendmail.account = 'tps.7540rw@gmail.com'
-notas.password = sendmail.password = 'fiuba7540rw'
-notas.spreadsheet_key = '0Ak4jNPKm9YdbdDRYNlRqWFlxR3FGR0RsRW5VZGlPa0E'
-
-TITLE = "Notas de Algoritmos I"
+TITLE = os.environ['NOTAS_TITLE']
 
 URL_QUERY = '/consultar'
 
@@ -40,7 +37,7 @@ class index:
 			form.notnull,
 			form.Validator(u'Ingresar una dirección de mail válida', lambda e: ('@' in e) and bool(parseaddr(e)[1])),
 			description=u"e-mail"
-		),
+		)
 	)
 
 	def GET(self):
@@ -49,6 +46,10 @@ class index:
 	def POST(self):
 		f = index.form()
 		if not f.validates():
+			return render.index(f)
+
+		if not notas.verificar(f.d.padron, f.d.email):
+			f.note = u'La dirección de e-mail no está asociada a ese padrón.'
 			return render.index(f)
 
 		try:
