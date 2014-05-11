@@ -1,0 +1,7 @@
+$def with(query_form)
+$var title: $title
+<form action="$url_query" method="GET">
+	$:query_form.render()
+	<button type="submit">Consultar notas</button>
+</form>
+
