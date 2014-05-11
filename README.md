@@ -9,7 +9,7 @@ Configuración y ejecución
 
 Crear un archivo llamado `env`:
 
-```
+```bash
 export NOTAS_TITLE="Notas de Algoritmos I"
 export NOTAS_ACCOUNT='xxxx@gmail.com'
 export NOTAS_PASSWORD='****'
@@ -18,7 +18,7 @@ export NOTAS_SPREADSHEET_KEY='*****'
 
 Ejecutar el servidor web:
 
-```
+```bash
 $ . ./env
 $ python notasweb.py
 ```
