@@ -5,13 +5,10 @@ import gdata.spreadsheet.service
 import itertools
 import collections
 
-#email = 'tps.7541rw@gmail.com'
-#password = 'fiuba7541rw'
-email = 'dessaya@gmail.com'
-password = 'thonet/vander'
-spreadsheet_key = '0Ak4jNPKm9YdbdDRYNlRqWFlxR3FGR0RsRW5VZGlPa0E'
-# All spreadsheets have worksheets. I think worksheet #1 by default always
-# has a value of 'od6'
+# para configurar desde afuera
+account = 'aaa@gmail.com'
+password = '12345'
+spreadsheet_key = '***'
 
 def worksheet_dict(feed):
 	d = {}
@@ -36,13 +33,15 @@ def get_row_data(row, keys):
 
 def get_feed():
 	gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-	gd_client.email = email
+	gd_client.email = account
 	gd_client.password = password
 	gd_client.source = u'Notas'
 	gd_client.ProgrammaticLogin()
 
-	worksheets = worksheet_dict(gd_client.GetWorksheetsFeed(spreadsheet_key))
-	worksheet_id = worksheets[u'Notas']
+	#worksheets = worksheet_dict(gd_client.GetWorksheetsFeed(spreadsheet_key))
+	#worksheet_id = worksheets[u'Notas']
+	# The first worksheet is always od6
+	worksheet_id = 'od6'
 
 	return gd_client.GetCellsFeed(spreadsheet_key, worksheet_id).entry
 
