@@ -1,7 +1,15 @@
 $def with (data)
 $var title: $title - Resultado de la consulta
-<table class="table">
-$for k, v in data.iteritems():
+
+$ items = tuple(data.iteritems())
+<table class="table table-hover">
+<thead>
+	<tr>
+		<th>$items[0][0]</th>
+		<th>$items[0][1]</th>
+	</tr>
+</thead>
+$for k, v in items[1:]:
 	<tr>
 		<th>$k</th>
 		<td>$v</td>

@@ -1,7 +1,39 @@
-$def with(query_form)
+$def with(form)
 $var title: $title
-<form action="$url_query" method="GET">
-	$:query_form.render()
-	<button type="submit">Consultar notas</button>
+
+$code:
+	def errorclass(i):
+		if i.note:
+			return "has-error"
+		return ""
+
+	def inputtype(i):
+		if i.id == 'email':
+			return "email"
+		return "text"
+
+	def getnote(f):
+		if f.note == 'Required': return 'Requerido'
+		return f.note
+
+<p class="lead">
+Ingresá tus datos para recibir un enlace con el que vas a poder consultar tus notas.
+</p>
+
+<form class="form-horizontal" role="form" method="post">
+$if form.note: <div class="alert alert-danger">$form.note</div>
+
+$for i in form.inputs:
+	<div class="form-group ${errorclass(i)}">
+		<div class="col-xs-4">
+		<input type="${inputtype(i)}" class="form-control input-lg" name="$i.name" id="$i.id" value="$i.value" placeholder="$i.description">
+		$if i.note: <span class="help-block">${getnote(i)}</span>
+		</div>
+ 	</div>
+<div class="form-group">
+    <div class="col-xs-4">
+		<button type="submit" class="btn btn-primary btn-lg">Obtener enlace</button>
+	</div>
+</div>
 </form>
 
