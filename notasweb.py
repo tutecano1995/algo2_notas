@@ -15,20 +15,23 @@ TITLE = os.environ['NOTAS_TITLE']
 URL_QUERY = '/consultar'
 
 urls = (
-	'/', 'index',
-	URL_QUERY, 'query',
+	'/?', 'index',
+	URL_QUERY + '/?', 'query',
 )
 
-render = web.template.render('templates/', base='layout', globals={'title': TITLE})
+render = web.template.render('templates/', base='layout', globals={'title': TITLE, 'ctx': web.ctx})
 
 padron_validator = form.regexp('\d+', u'Ingresar un padrón válido (solo números)')
+
+def error(msg):
+	return render.error(unicode(msg))
 
 def genkey(padron):
 	secret = 'Penn Premiere'
 	return hashlib.sha1(padron + secret).hexdigest()
 
 def genlink(padron):
-	return web.ctx.homedomain + URL_QUERY + '?padron=%s&key=%s' % (padron, genkey(padron))
+	return web.ctx.home + URL_QUERY + '?padron=%s&key=%s' % (padron, genkey(padron))
 
 class index:
 	form = form.Form(
@@ -55,7 +58,7 @@ class index:
 		try:
 			sendmail.sendmail(TITLE, f.d.email, genlink(f.d.padron))
 		except sendmail.SendmailException, e:
-			return render.error(str(e))
+			return error(e)
 
 		return render.email_sent(f.d.padron, f.d.email)
 
@@ -69,12 +72,18 @@ class query:
 	def GET(self):
 		f = query.form()
 		if not f.validates():
-			return render.error(u"Mmmm... algo salió mal")
+			return error(u"Mmmm... algo salió mal")
 		try:
 			return render.result(notas.notas(f.d.padron))
 		except IndexError, e:
-			return render.error(e.message)
+			return error(e.message)
+
+def notfound():
+	return web.notfound(error(u'Ruta inválida: ' + web.ctx.path))
+
+app = web.application(urls, locals())
+app.notfound = notfound
 
 if __name__ == "__main__":
-	web.application(urls, globals()).run()
+	app.run()
 
