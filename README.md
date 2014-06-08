@@ -14,6 +14,7 @@ export NOTAS_TITLE="Notas de Algoritmos I"
 export NOTAS_ACCOUNT='xxxx@gmail.com'
 export NOTAS_PASSWORD='****'
 export NOTAS_SPREADSHEET_KEY='*****'
+export NOTAS_SECRET='*****'
 ```
 
 Ejecutar el servidor web:

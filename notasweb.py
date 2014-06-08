@@ -11,6 +11,8 @@ import notas
 import sendmail
 
 TITLE = os.environ['NOTAS_TITLE']
+SECRET = os.environ['NOTAS_SECRET']
+assert SECRET # no debe estar vacio
 
 URL_QUERY = '/consultar'
 
@@ -27,8 +29,7 @@ def error(msg):
 	return render.error(unicode(msg))
 
 def genkey(padron):
-	secret = 'Penn Premiere'
-	return hashlib.sha1(padron + secret).hexdigest()
+	return hashlib.sha1(padron + SECRET).hexdigest()
 
 def genlink(padron):
 	return web.ctx.home + URL_QUERY + '?padron=%s&key=%s' % (padron, genkey(padron))
