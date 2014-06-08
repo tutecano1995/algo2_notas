@@ -3,7 +3,6 @@
 
 import gdata.spreadsheet.service
 import itertools
-import collections
 import os
 
 # para configurar desde afuera
@@ -24,13 +23,17 @@ def get_header(row):
 	return keys
 
 def get_row_data(row, keys):
-	data = collections.OrderedDict()
-	for k in keys:
-		data[k] = ''
+	data = [ (k, '') for k in keys ]
 	for cell in row:
 		i = int(cell.cell.col) - 1
-		data[keys[i]] = cell.cell.text
+		data[i] = (keys[i], cell.cell.text)
 	return data
+
+def find_cell(data, key):
+	for k, v in data:
+		if k == key:
+			return v
+	return None
 
 def connect():
 	client = gdata.spreadsheet.service.SpreadsheetsService()
@@ -68,9 +71,10 @@ def notas(padron):
 			keys = get_header(row)
 			continue
 		data = get_row_data(row, keys)
-		if PADRON not in data:
+		p = find_cell(data, PADRON)
+		if not p:
 			break
-		if data[PADRON] == padron:
+		if p == padron:
 			return data
 	raise IndexError(u'Padrón %s no encontrado' % padron)
 
