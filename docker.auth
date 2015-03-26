@@ -1,0 +1,11 @@
+# Este es el <title> de la página.
+# NOTA: no se utilizan comillas para las variables en este fichero.
+NOTAS_TITLE=Notas de Algoritmos I
+
+# Credenciales para acceder al spreadsheet.
+NOTAS_ACCOUNT=
+NOTAS_PASSWORD=
+NOTAS_SPREADSHEET_KEY=
+
+# Secreto para generar las URLs únicas.
+NOTAS_SECRET=

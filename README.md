@@ -24,3 +24,11 @@ $ . ./env
 $ python notasweb.py
 ```
 
+Alternativamente, mediante contenedores de [Docker][], completar las credenciales en el archivo `docker.auth`, y ejecutar:
+
+```bash
+$ docker build -t fiuba/notas .
+$ docker run --env-file docker.auth -p 8080:8080 --name notas.run fiuba/notas
+```
+
+  [docker]: https://www.docker.com
