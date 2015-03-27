@@ -12,6 +12,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
 COPY . /app/
 WORKDIR /app
 
+# Ejecutar sin privilegios, no como root.
+USER nobody
+
 # Por omisión, web.py usa el puerto 8080.
 EXPOSE 8080
 
