@@ -1,14 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# TODO: migrar de SpreadsheetsService a SpreadsheetsClient.
 import gdata.spreadsheet.service
 import itertools
 import os
 
+import notas_oauth
+
 # para configurar desde afuera
-account = os.environ['NOTAS_ACCOUNT']
-password = os.environ['NOTAS_PASSWORD']
-spreadsheet_key = os.environ['NOTAS_SPREADSHEET_KEY']
+SPREADSHEET_KEY = os.environ["NOTAS_SPREADSHEET_KEY"]
 
 def worksheet_dict(feed):
 	d = {}
@@ -36,24 +37,26 @@ def find_cell(data, key):
 	return None
 
 def connect():
-	client = gdata.spreadsheet.service.SpreadsheetsService()
-	client.email = account
-	client.password = password
-	client.source = u'Notas'
-	client.ProgrammaticLogin()
+	# En general SpreadsheetsService no es compatible con OAuth 2.0
+	# (solamente 1.0), pero si ponemos a mano el header Bearer, funciona:
+	# http://stackoverflow.com/a/29157967/848301.
+        token = notas_oauth.access_token()
+	client = gdata.spreadsheet.service.SpreadsheetsService(
+	        additional_headers={'Authorization': 'Bearer %s' % token})
+
 	return client
 
 def worksheet_id(client, worksheet_name):
-	worksheets = worksheet_dict(client.GetWorksheetsFeed(spreadsheet_key))
+	worksheets = worksheet_dict(client.GetWorksheetsFeed(SPREADSHEET_KEY))
 	return worksheets[worksheet_name]
 
 def GetListFeed(worksheet_name):
 	client = connect()
-	return client.GetListFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
+	return client.GetListFeed(SPREADSHEET_KEY, worksheet_id(client, worksheet_name)).entry
 
 def GetCellsFeed(worksheet_name):
 	client = connect()
-	return client.GetCellsFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
+	return client.GetCellsFeed(SPREADSHEET_KEY, worksheet_id(client, worksheet_name)).entry
 
 def verificar(padron, email):
 	rows = GetListFeed(u'DatosAlumnos')

@@ -1,12 +1,12 @@
 # -*- docker-image-name: "fiuba/notas" -*-
 
-# Debian stable (wheezy).
-FROM debian:7
+# Debian jessie porque wheezy no tiene python-oauth2client.
+FROM debian:8
 
 # Dependencias.
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive \
-      apt-get install -y python python-webpy python-gdata
+      apt-get install -y python python-webpy python-gdata python-oauth2client
 
 # Copiar la applicación (menos los ficheros en .dockerfile).
 COPY . /app/
