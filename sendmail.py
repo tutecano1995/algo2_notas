@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 # para configurar desde afuera
 account = os.environ['NOTAS_ACCOUNT']
 password = os.environ['NOTAS_PASSWORD']
+course = os.environ['NOTAS_COURSE_NAME']
 
 template = u"""
 Este es el link para consultar tus notas:
@@ -18,13 +19,13 @@ que quieras que otros puedan ver tus notas).
 
 -- 
 Recibiste este mensaje porque te inscribiste en el sistema de consulta de
-notas de Algoritmos I. Si no es así, te pedimos disculpas y por favor ingora este mail.
+notas de %s. Si no es así, te pedimos disculpas y por favor ingora este mail.
 """
 
 SendmailException = smtplib.SMTPException
 
 def sendmail(fromname, toaddr, key):
-	msg = MIMEText(template % key, _charset="utf-8")
+	msg = MIMEText(template % (key, course), _charset="utf-8")
 	msg["Subject"] = u'Enlace para consultar las notas'
 	msg["From"] = u'%s <%s>' % (fromname, account)
 	msg["To"] = toaddr
