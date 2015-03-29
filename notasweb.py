@@ -10,9 +10,10 @@ import hashlib
 import notas
 import sendmail
 
-TITLE = os.environ['NOTAS_TITLE']
 SECRET = os.environ['NOTAS_SECRET']
 assert SECRET # no debe estar vacio
+
+TITLE = "Notas de " + os.environ['NOTAS_COURSE_NAME']
 
 URL_QUERY = '/consultar'
 
