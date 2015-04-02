@@ -24,8 +24,8 @@ notas de %s. Si no es así, te pedimos disculpas y por favor ingora este mail.
 
 SendmailException = smtplib.SMTPException
 
-def sendmail(fromname, toaddr, key):
-	msg = MIMEText(template % (key, course), _charset="utf-8")
+def sendmail(fromname, toaddr, link):
+	msg = MIMEText(template % (link, course), _charset="utf-8")
 	msg["Subject"] = u'Enlace para consultar las notas'
 	msg["From"] = u'%s <%s>' % (fromname, account)
 	msg["To"] = toaddr
