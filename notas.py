@@ -62,7 +62,7 @@ def matches(row, column, value):
 	cellvalue = cell.text
 	if not cellvalue:
 		return False
-	return cellvalue and cellvalue.strip().lower() == value
+	return cellvalue.strip().lower() == value
 
 def verificar(padron, email):
 	rows = GetListFeed(u'DatosAlumnos')
