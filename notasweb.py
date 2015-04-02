@@ -53,7 +53,7 @@ class index:
 		if not f.validates():
 			return render.index(f)
 
-		if not notas.verificar(f.d.padron, f.d.email):
+		if not notas.verificar(f.d.padron.strip().lower(), f.d.email.strip().lower()):
 			f.note = u'La dirección de e-mail no está asociada a ese padrón.'
 			return render.index(f)
 
