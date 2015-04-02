@@ -33,10 +33,7 @@ def genkey(padron):
 	return hashlib.sha1(padron + SECRET).hexdigest()
 
 def genlink(padron):
-	# Usamos HTTP_REFERER acá para el caso en que estamos detrás de un
-	# reverse proxy.
-	return (web.ctx.env.get("HTTP_REFERER", web.ctx.home) +
-	        URL_QUERY + '?padron=%s&key=%s' % (padron, genkey(padron)))
+	return web.ctx.home + URL_QUERY + '?padron=%s&key=%s' % (padron, genkey(padron))
 
 class index:
 	form = form.Form(
