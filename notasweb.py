@@ -24,7 +24,7 @@ urls = (
 
 render = web.template.render('templates/', base='layout', globals={'title': TITLE, 'ctx': web.ctx})
 
-padron_validator = form.regexp('\d+', u'Ingresar un padrón válido (solo números)')
+padron_validator = form.regexp('\w+', u'Ingresar un padrón válido (solo números)')
 
 def error(msg):
 	return render.error(unicode(msg))
