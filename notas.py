@@ -55,12 +55,18 @@ def GetCellsFeed(worksheet_name):
 	client = connect()
 	return client.GetCellsFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
 
+def matches(row, column, value):
+	cell = row.custom.get(column, None)
+	if not cell:
+		return False
+	cellvalue = cell.text
+	if not cellvalue:
+		return False
+	return cellvalue and cellvalue.strip().lower() == value
+
 def verificar(padron, email):
 	rows = GetListFeed(u'DatosAlumnos')
-	for row in rows:
-		if row.custom[u'padrón'].text == padron and row.custom[u'email'].text.lower() == email.lower():
-			return True
-	return False
+	return any(matches(row, u'padrón', padron) and matches(row, u'email', email) for row in rows)
 
 def notas(padron):
 	cells = GetCellsFeed(u'Notas')
