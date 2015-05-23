@@ -1,42 +1,44 @@
-$def with(form)
-$var title: $title
+{% extends "layout.html" %}
 
-$code:
-	def errorclass(i):
-		if i.note:
-			return "has-error"
-		return ""
+{% block content %}
+  <p class="lead">
+    Ingresá tus datos para recibir un enlace con el que vas a poder
+    consultar tus notas.
+  </p>
 
-	def inputtype(i):
-		if i.id == 'email':
-			return "email"
-		return "text"
+  <form class="form-horizontal" role="form" method="post">
+    {% for cat, msg in get_flashed_messages(with_categories=True) %}
+      <div class="alert alert-{{ cat }}">{{ msg }}</div>
+    {% endfor %}
 
-	def getnote(f):
-		if f.note == 'Required': return 'Requerido'
-		return f.note
+    {{ form.hidden_tag() }}
 
-<p class="lead">
-Ingresá tus datos para recibir un enlace con el que vas a poder consultar tus notas.
-</p>
+    {{ form_field(form.padron) }}
+    {{ form_field(form.email,
+                  help_msg=("La dirección debe coincidir con la que "
+                            "te anotaste para la lista de correo")) }}
 
-<form class="form-horizontal" role="form" method="post">
-$if form.note: <div class="alert alert-danger">$form.note</div>
+    {{ form_field(form.submit, class="btn btn-primary btn-lg") }}
+  </form>
+{% endblock %}
 
-$for i in form.inputs:
-	<div class="form-group ${errorclass(i)}">
-		<div class="col-xs-4">
-		<input type="${inputtype(i)}" class="form-control input-lg" name="$i.name" id="$i.id" value="$i.value" placeholder="$i.description">
-		$if i.note:
-			<span class="help-block">${getnote(i)}</span>
-		$elif i.id == 'email':
-			<span class="help-block">La dirección debe coincidir con la que anotaste para la lista de correo.</span>
-		</div>
- 	</div>
-<div class="form-group">
-    <div class="col-xs-4">
-		<button type="submit" class="btn btn-primary btn-lg">Obtener enlace</button>
-	</div>
-</div>
-</form>
 
+{% macro form_field(field, class="form-control input-lg", help_msg="") %}
+   <div class="form-group">
+     <div class="col-xs-4 {{ 'has-error' if field.errors else ''}}">
+
+        {{ field(class=class, placeholder=field.label.text) }}
+
+        {% for error in field.errors %}
+          <span class="help-block">{{ error }}</span>
+        {% endfor %}
+
+        {% if help_msg %}
+          <span class="help-block">{{ help_msg }}</span>
+        {% endif %}
+
+      </div>
+    </div>
+{% endmacro %}
+
+<!-- vim: set sw=2 et : -->

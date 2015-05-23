@@ -1,4 +1,5 @@
 gspread==0.2.5
 httplib2==0.9.1
 oauth2client==1.4.11
-web.py==0.37
+Flask==0.10.1
+Flask-WTF==0.12
