@@ -1,2 +1,2 @@
-gdata==2.0.18
+gspread==0.2.5
 web.py==0.37

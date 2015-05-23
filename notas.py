@@ -1,89 +1,67 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import gdata.spreadsheet.service
-import itertools
+from __future__ import unicode_literals
+
 import os
+import gspread
 
-# para configurar desde afuera
-account = os.environ['NOTAS_ACCOUNT']
-password = os.environ['NOTAS_PASSWORD']
-spreadsheet_key = os.environ['NOTAS_SPREADSHEET_KEY']
+# Constantes
+COL_EMAIL = "Email"
+COL_PADRON = "Padrón"
 
-def worksheet_dict(feed):
-	d = {}
-	for i, entry in enumerate(feed.entry):
-		d[entry.title.text] = entry.id.text.split('/')[-1]
-	return d
+SHEET_NOTAS = "Notas"
+SHEET_ALUMNOS = "DatosAlumnos"
 
-def get_header(row):
-	keys = []
-	for i, cell in enumerate(row):
-		keys.append(cell.cell.text)
-	return keys
+# Configuración externa.
+ACCOUNT = os.environ["NOTAS_ACCOUNT"]
+PASSWORD = os.environ["NOTAS_PASSWORD"]
+SPREADSHEET_KEY = os.environ["NOTAS_SPREADSHEET_KEY"]
 
-def get_row_data(row, keys):
-	data = [ (k, '') for k in keys ]
-	for cell in row:
-		i = int(cell.cell.col) - 1
-		data[i] = (keys[i], cell.cell.text)
-	return data
 
-def find_cell(data, key):
-	for k, v in data:
-		if k == key:
-			return v
-	return None
+def get_sheet(worksheet_name):
+    """Devuelve un objeto gspread.Worksheet.
 
-def connect():
-	client = gdata.spreadsheet.service.SpreadsheetsService()
-	client.email = account
-	client.password = password
-	client.source = u'Notas'
-	client.ProgrammaticLogin()
-	return client
+    Utiliza la constante global SPREADSHEET_KEY.
+    """
+    # TODO: ClientLogin está deprecado. Usar gspread.authorize() instead.
+    client = gspread.login(ACCOUNT, PASSWORD)
+    spreadsheet = client.open_by_key(SPREADSHEET_KEY)
+    return spreadsheet.worksheet(worksheet_name)
 
-def worksheet_id(client, worksheet_name):
-	worksheets = worksheet_dict(client.GetWorksheetsFeed(spreadsheet_key))
-	return worksheets[worksheet_name]
 
-def GetListFeed(worksheet_name):
-	client = connect()
-	return client.GetListFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
+def verificar(padron_web, email_web):
+    """Verifica que hay un alumno con el padrón y e-mail indicados.
+    """
+    alumnos = get_sheet(SHEET_ALUMNOS)
 
-def GetCellsFeed(worksheet_name):
-	client = connect()
-	return client.GetCellsFeed(spreadsheet_key, worksheet_id(client, worksheet_name)).entry
+    for alumno in alumnos.get_all_records():
+        email = alumno.get(COL_EMAIL, "")
+        padron = str(alumno.get(COL_PADRON, ""))
 
-def matches(row, column, value):
-	cell = row.custom.get(column, None)
-	if not cell:
-		return False
-	cellvalue = cell.text
-	if not cellvalue:
-		return False
-	return cellvalue.strip().lower() == value
+        if not email or not padron:
+            continue
 
-def verificar(padron, email):
-	rows = GetListFeed(u'DatosAlumnos')
-	return any(matches(row, u'padrón', padron) and matches(row, u'email', email) for row in rows)
+        if (padron.lower() == padron_web.lower() and
+            email.lower() == email_web.lower()):
+            return True
+
+    return False
+
 
 def notas(padron):
-	cells = GetCellsFeed(u'Notas')
-	keys = None
-	PADRON = 'Padrón'
-	for _, row in itertools.groupby(cells, lambda cell: cell.cell.row):
-		if keys is None:
-			keys = get_header(row)
-			continue
-		data = get_row_data(row, keys)
-		p = find_cell(data, PADRON)
-		if not p:
-			break
-		if p == padron:
-			return data
-	raise IndexError(u'Padrón %s no encontrado' % padron)
+    notas = get_sheet(SHEET_NOTAS)
+    filas = notas.get_all_values()
+    headers = filas.pop(0)
+    idx_padron = headers.index(COL_PADRON)
 
-if __name__ == '__main__':
-	print verificar('942039', 'aaa')
+    for alumno in filas:
+        if padron == alumno[idx_padron]:
+            return zip(headers, alumno)
+
+    raise IndexError("Padrón %s no encontrado" % padron)
+
+
+if __name__ == "__main__":
+    print(verificar("942039", "aaa"))
 
