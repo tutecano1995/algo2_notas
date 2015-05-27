@@ -3,9 +3,15 @@
 # Esto se utiliza para el <title> de la página, y para el cuerpo del mail.
 NOTAS_COURSE_NAME=Algoritmos I
 
-# Credenciales para acceder al spreadsheet.
+# Credenciales para nuestra autenticación OAuth2.
+NOTAS_OAUTH_CLIENT=
+NOTAS_OAUTH_SECRET=
+NOTAS_REFRESH_TOKEN=
+
+# Nombre de la cuenta para acceder al spreadsheet y enviar mail.
 NOTAS_ACCOUNT=
-NOTAS_PASSWORD=
+
+# El UID de la spreadsheet a usar.
 NOTAS_SPREADSHEET_KEY=
 
 # Secreto para generar las URLs únicas.
