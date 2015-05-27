@@ -12,7 +12,9 @@ Crear un archivo llamado `env`:
 ```bash
 export NOTAS_COURSE_NAME="Algoritmos I"
 export NOTAS_ACCOUNT='xxxx@gmail.com'
-export NOTAS_REFRESH='****'
+export NOTAS_OAUTH_CLIENT='****'
+export NOTAS_OAUTH_SECRET='****'
+export NOTAS_REFRESH_TOKEN='****'
 export NOTAS_SPREADSHEET_KEY='*****'
 export NOTAS_SECRET='*****'
 ```
@@ -36,4 +38,4 @@ $ docker run --env-file docker.auth -p 8080:8080 --name notas.run fiuba/notas
 Autenticación
 -------------
 
-El valor de `NOTAS_REFRESH` se obtiene mediante OAuth2. Véase la documentación de `oob_auth.py`.
+El valor de `NOTAS_REFRESH_TOKEN` se obtiene mediante OAuth2. Véase la documentación de `oob_auth.py`.

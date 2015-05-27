@@ -9,9 +9,9 @@ import sys
 
 import oauth2client.client
 
-_CLIENT_ID = "1054797797536-87rgh89klm992siqgmj5rfs3hp5tvme0.apps.googleusercontent.com"
-_CLIENT_SECRET = "8HpWgj29uiyIf2x3tfFyxWL1"
-_OAUTH_REFRESH = os.environ["NOTAS_REFRESH"]
+_CLIENT_ID = os.environ["NOTAS_OAUTH_CLIENT"]
+_CLIENT_SECRET = os.environ["NOTAS_OAUTH_SECRET"]
+_OAUTH_REFRESH = os.environ["NOTAS_REFRESH_TOKEN"]
 
 _creds = oauth2client.client.OAuth2Credentials(
     "", _CLIENT_ID, _CLIENT_SECRET, _OAUTH_REFRESH,

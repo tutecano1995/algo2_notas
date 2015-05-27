@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """Script para obtener el token de autorización de la aplicación.
@@ -47,7 +47,8 @@ def main():
     args = parser.parse_args()
     credentials = get_credentials(args.client_secrets)
 
-    print 'NOTAS_REFRESH="%s"' % credentials.refresh_token
+    # TODO(dato): también imprimir NOTAS_OAUTH_{CLIENT,SECRET}.
+    print('NOTAS_REFRESH_TOKEN="%s"' % credentials.refresh_token)
 
 
 if __name__ == "__main__":
