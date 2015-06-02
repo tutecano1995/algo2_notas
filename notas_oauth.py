@@ -19,14 +19,16 @@ _creds = oauth2client.client.OAuth2Credentials(
     "https://accounts.google.com/o/oauth2/token", "notasweb/1.0")
 
 
-def access_token():
-    """Devuelve el token OAuth, refrescando las credenciales si es necesario.
+def get_credenciales():
+    """Devuelve nuestro objeto OAuth2Credentials, actualizado.
+
+    Esta función llama a _refresh() si el token expira en menos de 5 minutos.
     """
-    # TODO: en lugar de refrescar cuando expire, refrescar quizá cinco minuts
-    # antes para evitar race conditions.
-    # TODO: locking?
-    if _creds.access_token_expired:
+    now = datetime.datetime.utcnow()
+    valid_until = _creds.token_expiry - datetime.timedelta(minutes=5)
+
+    if valid_until < now:
         print >>sys.stderr, "Generando nuevo token de acceso."
         _creds.refresh(httplib2.Http())
 
-    return _creds.access_token
+    return _creds

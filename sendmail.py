@@ -32,8 +32,9 @@ def sendmail(fromname, toaddr, link):
 	msg["From"] = u'%s <%s>' % (fromname, ACCOUNT)
 	msg["To"] = toaddr
 
-	xoauth2_tok = "user=%s\1" "auth=Bearer %s\1\1" % (
-	        ACCOUNT, notas_oauth.access_token())
+	creds = notas_oauth.get_credenciales()
+	xoauth2_tok = "user=%s\1" "auth=Bearer %s\1\1" % (ACCOUNT,
+                                                          creds.access_token)
 	server = smtplib.SMTP('smtp.gmail.com', 587)
 	server.ehlo()
 	server.starttls()

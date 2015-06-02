@@ -40,7 +40,8 @@ def connect():
 	# En general SpreadsheetsService no es compatible con OAuth 2.0
 	# (solamente 1.0), pero si ponemos a mano el header Bearer, funciona:
 	# http://stackoverflow.com/a/29157967/848301.
-        token = notas_oauth.access_token()
+	creds = notas_oauth.get_credenciales()
+	token = creds.access_token
 	client = gdata.spreadsheet.service.SpreadsheetsService(
 	        additional_headers={'Authorization': 'Bearer %s' % token})
 
