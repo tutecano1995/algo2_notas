@@ -6,6 +6,9 @@ import hashlib
 import flask
 import flask_wtf
 
+from webargs import Arg, ValidationError
+from webargs.flaskparser import FlaskParser
+
 from wtforms import fields
 from wtforms import validators
 from wtforms.fields import html5
@@ -18,6 +21,12 @@ app.secret_key = os.environ["NOTAS_SECRET"]
 app.config.title = "Notas de " + os.environ["NOTAS_COURSE_NAME"]
 
 assert app.secret_key
+
+
+@app.errorhandler(400)
+def bad_request(err):
+    return flask.render_template(
+        "error.html", message=str(err.data["message"])), 400
 
 
 class Formulario(flask_wtf.Form):
@@ -58,22 +67,21 @@ def index():
 
 @app.route("/consultar")
 def consultar():
-    try:
-        key = flask.request.args["key"]
-        padron = flask.request.args["padron"]
-    except KeyError as e:
-        return flask.render_template(
-            "error.html",
-            message="Error: URL de consulta no válida ({})".format(e))
+    args = {
+        "key": Arg(str, required=True),
+        "padron": Arg(str, required=True),
+    }
+    def validar(args):
+        if args["key"] == genkey(args["padron"]):
+            return True
+        else:
+            raise ValidationError("Parámetro ‘padron’ o ‘key’ no válido")
 
-    if key != genkey(padron):
-        return flask.render_template(
-            "error.html",
-            message="Error: parametro ‘padron’ o ‘key’ no válidos")
+    result = FlaskParser().parse(args, validate=validar)
 
     try:
-        notas_alumno = notas.notas(padron)
-    except IndexError as e:
+        notas_alumno = notas.notas(result["padron"])
+    except (IndexError, KeyError) as e:
         return flask.render_template("error.html", message=str(e))
     else:
         return flask.render_template("result.html", items=notas_alumno)

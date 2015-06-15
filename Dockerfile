@@ -10,7 +10,7 @@ RUN apt-get update && apt-get upgrade -y    && \
         python3-flaskext.wtf    \
         python3-oauth2client    \
         uwsgi-plugin-python3 && \
-    pip3 install gspread==0.2.5
+    pip3 install gspread==0.2.5 webargs==0.13.0
 
 # Copiar la applicación (menos los ficheros en .dockerignore).
 COPY . /app/
