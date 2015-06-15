@@ -8,7 +8,7 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive \
       apt-get install -y python python-webpy python-gdata python-oauth2client
 
-# Copiar la applicación (menos los ficheros en .dockerfile).
+# Copiar la applicación (menos los ficheros en .dockerignore).
 COPY . /app/
 WORKDIR /app
 
