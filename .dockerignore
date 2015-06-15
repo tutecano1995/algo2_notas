@@ -4,6 +4,7 @@
 .dockerignore
 
 README.md
+requirements.txt
 
 Dockerfile
 docker.auth
