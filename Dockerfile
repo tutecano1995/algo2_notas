@@ -6,7 +6,8 @@ FROM debian:7
 # Dependencias.
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive \
-      apt-get install -y python python-webpy python-gdata
+      apt-get install -y python python-webpy python-pip && \
+      pip install gspread==0.2.5
 
 # Copiar la applicación (menos los ficheros en .dockerfile).
 COPY . /app/
