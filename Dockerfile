@@ -3,8 +3,8 @@
 FROM debian:8
 
 # Dependencias.
-RUN apt-get update && env DEBIAN_FRONTEND=noninteractive \
-    apt-get install --assume-yes --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y    && \
+    apt-get install -y --no-install-recommends \
         python-pip             \
         python-webpy           \
         python-oauth2client    \
