@@ -1,93 +1,65 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# TODO: migrar de SpreadsheetsService a SpreadsheetsClient.
-import gdata.spreadsheet.service
-import itertools
+from __future__ import unicode_literals
+
 import os
+import gspread
 
 import notas_oauth
 
-# para configurar desde afuera
+# Constantes
+COL_EMAIL = "Email"
+COL_PADRON = "Padrón"
+
+SHEET_NOTAS = "Notas"
+SHEET_ALUMNOS = "DatosAlumnos"
+
+# Configuración externa.
 SPREADSHEET_KEY = os.environ["NOTAS_SPREADSHEET_KEY"]
 
-def worksheet_dict(feed):
-	d = {}
-	for i, entry in enumerate(feed.entry):
-		d[entry.title.text] = entry.id.text.split('/')[-1]
-	return d
 
-def get_header(row):
-	keys = []
-	for i, cell in enumerate(row):
-		keys.append(cell.cell.text)
-	return keys
+def get_sheet(worksheet_name):
+    """Devuelve un objeto gspread.Worksheet.
 
-def get_row_data(row, keys):
-	data = [ (k, '') for k in keys ]
-	for cell in row:
-		i = int(cell.cell.col) - 1
-		data[i] = (keys[i], cell.cell.text)
-	return data
+    Utiliza la constante global SPREADSHEET_KEY.
+    """
+    client = gspread.authorize(notas_oauth.get_credenciales())
+    spreadsheet = client.open_by_key(SPREADSHEET_KEY)
+    return spreadsheet.worksheet(worksheet_name)
 
-def find_cell(data, key):
-	for k, v in data:
-		if k == key:
-			return v
-	return None
 
-def connect():
-	# En general SpreadsheetsService no es compatible con OAuth 2.0
-	# (solamente 1.0), pero si ponemos a mano el header Bearer, funciona:
-	# http://stackoverflow.com/a/29157967/848301.
-	creds = notas_oauth.get_credenciales()
-	token = creds.access_token
-	client = gdata.spreadsheet.service.SpreadsheetsService(
-	        additional_headers={'Authorization': 'Bearer %s' % token})
+def verificar(padron_web, email_web):
+    """Verifica que hay un alumno con el padrón y e-mail indicados.
+    """
+    alumnos = get_sheet(SHEET_ALUMNOS)
 
-	return client
+    for alumno in alumnos.get_all_records():
+        email = alumno.get(COL_EMAIL, "")
+        padron = str(alumno.get(COL_PADRON, ""))
 
-def worksheet_id(client, worksheet_name):
-	worksheets = worksheet_dict(client.GetWorksheetsFeed(SPREADSHEET_KEY))
-	return worksheets[worksheet_name]
+        if not email or not padron:
+            continue
 
-def GetListFeed(worksheet_name):
-	client = connect()
-	return client.GetListFeed(SPREADSHEET_KEY, worksheet_id(client, worksheet_name)).entry
+        if (padron.lower() == padron_web.lower() and
+            email.lower() == email_web.lower()):
+            return True
 
-def GetCellsFeed(worksheet_name):
-	client = connect()
-	return client.GetCellsFeed(SPREADSHEET_KEY, worksheet_id(client, worksheet_name)).entry
+    return False
 
-def matches(row, column, value):
-	cell = row.custom.get(column, None)
-	if not cell:
-		return False
-	cellvalue = cell.text
-	if not cellvalue:
-		return False
-	return cellvalue.strip().lower() == value
-
-def verificar(padron, email):
-	rows = GetListFeed(u'DatosAlumnos')
-	return any(matches(row, u'padrón', padron) and matches(row, u'email', email) for row in rows)
 
 def notas(padron):
-	cells = GetCellsFeed(u'Notas')
-	keys = None
-	PADRON = 'Padrón'
-	for _, row in itertools.groupby(cells, lambda cell: cell.cell.row):
-		if keys is None:
-			keys = get_header(row)
-			continue
-		data = get_row_data(row, keys)
-		p = find_cell(data, PADRON)
-		if not p:
-			break
-		if p == padron:
-			return data
-	raise IndexError(u'Padrón %s no encontrado' % padron)
+    notas = get_sheet(SHEET_NOTAS)
+    filas = notas.get_all_values()
+    headers = filas.pop(0)
+    idx_padron = headers.index(COL_PADRON)
 
-if __name__ == '__main__':
-	print verificar('942039', 'aaa')
+    for alumno in filas:
+        if padron == alumno[idx_padron]:
+            return zip(headers, alumno)
 
+    raise IndexError("Padrón %s no encontrado" % padron)
+
+
+if __name__ == "__main__":
+    print(verificar("942039", "aaa"))

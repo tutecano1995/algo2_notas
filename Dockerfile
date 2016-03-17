@@ -5,10 +5,11 @@ FROM debian:8
 # Dependencias.
 RUN apt-get update && env DEBIAN_FRONTEND=noninteractive \
     apt-get install --assume-yes --no-install-recommends \
-        python-webpy        \
-        python-gdata        \
-        python-oauth2client \
-        uwsgi-plugin-python
+        python-pip             \
+        python-webpy           \
+        python-oauth2client    \
+        uwsgi-plugin-python && \
+    pip install gspread==0.2.5
 
 # Copiar la applicación (menos los ficheros en .dockerignore).
 COPY . /app/
