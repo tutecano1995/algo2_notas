@@ -1,0 +1,45 @@
+version: "2"
+
+services:
+
+  _base:
+    image: fiuba/notas
+
+    user: nobody
+    restart: always
+    read_only: true
+    network_mode: default
+
+    cap_drop:
+      - ALL
+
+    env_file: .env  # Incluir NOTAS_SECRET, NOTAS_REFRESH_TOKEN,
+                    # NOTAS_OAUTH_CLIENT y NOTAS_OAUTH_SECRET.
+
+  notas1:
+    extends: _base
+    hostname: notas1
+    container_name: notas1.run
+
+    ports:
+      - "7540:3031"
+
+    environment:
+      NOTAS_COURSE_NAME: "Algoritmos I"
+      NOTAS_ACCOUNT: "tps.7540rw@gmail.com"
+      NOTAS_SPREADSHEET_KEY: "1b8s9fOhakByvtdAb79ubf6hTeIQ_j9Y7H_LZsGf1iKw"
+
+  notas2:
+    extends: _base
+    hostname: notas2
+    container_name: notas2.run
+
+    ports:
+      - "7541:3031"
+
+    environment:
+      NOTAS_COURSE_NAME: "Algoritmos II"
+      NOTAS_ACCOUNT: "tps.7541rw@gmail.com"
+      NOTAS_SPREADSHEET_KEY: "1WoGVRzAv6aIYkjOzIDG_LwclNx6BSbMuObskXUNwS2c"
+
+    env_file: .env2  # Sobrescribir NOTAS_REFRESH_TOKEN.

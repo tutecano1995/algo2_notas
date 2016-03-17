@@ -6,5 +6,6 @@
 README.md
 requirements.txt
 
+.env
+.env2
 Dockerfile
-docker.auth
