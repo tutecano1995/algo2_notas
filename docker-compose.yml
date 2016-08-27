@@ -27,7 +27,7 @@ services:
     environment:
       NOTAS_COURSE_NAME: "Algoritmos I"
       NOTAS_ACCOUNT: "tps.7540rw@gmail.com"
-      NOTAS_SPREADSHEET_KEY: "1b8s9fOhakByvtdAb79ubf6hTeIQ_j9Y7H_LZsGf1iKw"
+      NOTAS_SPREADSHEET_KEY: "1HYQrhLB5sfbtcLDzvOzRqQaeoMY59CJ72A7V9KKk_ao"
 
   notas2:
     extends: _base
@@ -40,6 +40,6 @@ services:
     environment:
       NOTAS_COURSE_NAME: "Algoritmos II"
       NOTAS_ACCOUNT: "tps.7541rw@gmail.com"
-      NOTAS_SPREADSHEET_KEY: "1WoGVRzAv6aIYkjOzIDG_LwclNx6BSbMuObskXUNwS2c"
+      NOTAS_SPREADSHEET_KEY: "122hWJQwAJ9Lm8TE14sLvncY1F_GMjQE63qY0cjUZui8"
 
     env_file: .env2  # Sobrescribir NOTAS_REFRESH_TOKEN.
