@@ -1,92 +1,105 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
-import web
 import os
-from web import form
-from email.utils import parseaddr
-import hashlib
+
+import flask
+import flask_wtf
+import itsdangerous
+
+from webargs import fields as wfields
+from webargs.flaskparser import use_args
+
+from wtforms import fields
+from wtforms import validators
+from wtforms.fields import html5
 
 import notas
 import sendmail
 
-SECRET = os.environ['NOTAS_SECRET']
-assert SECRET # no debe estar vacio
+app = flask.Flask(__name__)
+app.secret_key = os.environ["NOTAS_SECRET"]
+app.config.title = "Notas de " + os.environ["NOTAS_COURSE_NAME"]
 
-TITLE = "Notas de " + os.environ['NOTAS_COURSE_NAME']
+assert app.secret_key
+signer = itsdangerous.URLSafeSerializer(app.secret_key)
 
-URL_QUERY = '/consultar'
 
-urls = (
-	'/?', 'index',
-	URL_QUERY + '/?', 'query',
-)
+class Formulario(flask_wtf.Form):
+    """Pide el padrón y la dirección de correo.
+    """
+    padron = fields.StringField(
+        "Padrón", validators=[
+            validators.Regexp(r"\w+", message="Ingrese un padrón válido")])
 
-render = web.template.render('templates/', base='layout', globals={'title': TITLE, 'ctx': web.ctx})
+    email = html5.EmailField(
+        "E-mail", validators=[
+            validators.Email(message="Ingrese una dirección de e-mail válida")])
 
-padron_validator = form.regexp('\w+', u'Ingresar un padrón válido (solo números)')
+    submit = fields.SubmitField("Obtener enlace")
 
-def error(msg):
-	return render.error(unicode(msg))
 
-def genkey(padron):
-	return hashlib.sha1(padron + SECRET).hexdigest()
+@app.route("/", methods=('GET', 'POST'))
+def index():
+    """Sirve la página de solicitud del enlace.
+    """
+    form = Formulario()
+
+    if form.validate_on_submit():
+        padron = norm_field(form.padron)
+        email = norm_field(form.email)
+
+        if not notas.verificar(padron, email):
+            flask.flash(
+                "La dirección de mail no está asociada a ese padrón", "danger")
+        else:
+            try:
+                sendmail.sendmail(app.config.title, email, genlink(padron))
+            except sendmail.SendmailException as e:
+                return flask.render_template("error.html", message=str(e))
+            else:
+                return flask.render_template("email_sent.html", email=email)
+
+    return flask.render_template("index.html", form=form)
+
+
+@app.errorhandler(422)
+def bad_request(err):
+    """Se invoca cuando falla la validación de la clave.
+    """
+    return flask.render_template( "error.html", message="Clave no válida")
+
+
+def validate(value):
+    # Needed because URLSafeSerializer does not have a validate().
+    try:
+        return bool(signer.loads(value))
+    except itsdangerous.BadSignature:
+        return False
+
+
+@app.route("/consultar")
+@use_args({"clave": wfields.Str(required=True, validate=validate)})
+def consultar(args):
+    try:
+        notas_alumno = notas.notas(signer.loads(args["clave"]))
+    except IndexError as e:
+        return flask.render_template("error.html", message=str(e))
+    else:
+        return flask.render_template("result.html", items=notas_alumno)
+
+
+def norm_field(f):
+    """Devuelve los datos del campo en minúsculas y sin espacio alreadedor.
+    """
+    return f.data.strip().lower()
+
 
 def genlink(padron):
-	return web.ctx.home + URL_QUERY + '?padron=%s&key=%s' % (padron, genkey(padron))
+    """Devuelve el enlace de consulta para un padrón.
+    """
+    signed_padron = signer.dumps(padron)
+    return flask.url_for("consultar", clave=signed_padron, _external=True)
 
-class index:
-	form = form.Form(
-		form.Textbox('padron', form.notnull, padron_validator, description=u"Padrón"),
-		form.Textbox('email', 
-			form.notnull,
-			form.Validator(u'Ingresar una dirección de mail válida', lambda e: ('@' in e) and bool(parseaddr(e)[1])),
-			description=u"e-mail"
-		)
-	)
-
-	def GET(self):
-		return render.index(index.form())
-
-	def POST(self):
-		f = index.form()
-		if not f.validates():
-			return render.index(f)
-
-		if not notas.verificar(f.d.padron.strip().lower(), f.d.email.strip().lower()):
-			f.note = u'La dirección de e-mail no está asociada a ese padrón.'
-			return render.index(f)
-
-		try:
-			sendmail.sendmail(TITLE, f.d.email, genlink(f.d.padron))
-		except sendmail.SendmailException, e:
-			return error(e)
-
-		return render.email_sent(f.d.padron, f.d.email)
-
-class query:
-	form = form.Form(
-		form.Textbox('padron', form.notnull, padron_validator),
-		form.Textbox('key', form.notnull),
-		validators = (form.Validator('invalid key', lambda f: f.key == genkey(f.padron)),)
-	)
-
-	def GET(self):
-		f = query.form()
-		if not f.validates():
-			return error(u"Mmmm... algo salió mal")
-		try:
-			return render.result(notas.notas(f.d.padron))
-		except IndexError, e:
-			return error(e.message)
-
-def notfound():
-	return web.notfound(error(u'Ruta inválida: ' + web.ctx.path))
-
-app = web.application(urls, locals())
-app.notfound = notfound
-application = app.wsgifunc()
 
 if __name__ == "__main__":
-	app.run()
-
+    app.run(debug=True)

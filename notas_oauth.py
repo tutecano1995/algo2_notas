@@ -28,7 +28,7 @@ def get_credenciales():
     valid_until = _creds.token_expiry - datetime.timedelta(minutes=5)
 
     if valid_until < now:
-        print >>sys.stderr, "Generando nuevo token de acceso."
+        print("Generando nuevo token de acceso.", file=sys.stderr)
         _creds.refresh(httplib2.Http())
 
     return _creds

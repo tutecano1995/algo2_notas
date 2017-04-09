@@ -1,6 +1,16 @@
-$def with (message)
-$var title: $title - Error
+{% extends "layout.html" %}
+
+{% block title %}{{ config.title }} - Error{% endblock %}
+
+{% block content %}
+
 <div class="alert alert-danger">
-<p class="lead"><span class="glyphicon glyphicon-exclamation-sign"></span> $message</p>
+  <p class="lead">
+    <span class="glyphicon glyphicon-exclamation-sign"></span>
+    {{ message }}
+  </p>
 </div>
-<a href="$ctx.homepath"><span class="glyphicon glyphicon-arrow-left"></span> Volver</a>
+
+<a href="{{ url_for('index') }}"><span class="glyphicon glyphicon-arrow-left"></span> Volver</a>
+
+{% endblock %}

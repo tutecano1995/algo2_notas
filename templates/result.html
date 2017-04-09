@@ -1,16 +1,24 @@
-$def with (items)
-$var title: $title - Resultado de la consulta
+{% extends "layout.html" %}
+
+{% block title %}{{ config.title }} - Resultado de la consulta{% endblock %}
+
+{% block content %}
 
 <table class="table table-hover">
 <thead>
-	<tr>
-		<th>$items[0][0]</th>
-		<th>$items[0][1]</th>
-	</tr>
+  <tr>
+  {% with key, val = items.__next__() %}
+    <th>{{ key }}</th>
+    <th>{{ val }}</th>
+  </tr>
+  {% endwith %}
 </thead>
-$for k, v in items[1:]:
-	<tr>
-		<th>$k</th>
-		<td>$v</td>
-	</tr>
+{% for key, val in items %}
+  <tr>
+    <th>{{ key }}</th>
+    <td>{{ val }}</td>
+  </tr>
+{% endfor %}
 </table>
+
+{% endblock %}

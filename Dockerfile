@@ -3,13 +3,13 @@
 FROM debian:8
 
 # Dependencias.
+COPY requirements.txt /app/
+
 RUN apt-get update && apt-get upgrade -y    && \
     apt-get install -y --no-install-recommends \
-        python-pip             \
-        python-webpy           \
-        python-oauth2client    \
-        uwsgi-plugin-python && \
-    pip install gspread==0.2.5
+        python3-pip             \
+        uwsgi-plugin-python3 && \
+    pip3 install -r /app/requirements.txt
 
 # Copiar la applicación (menos los ficheros en .dockerignore).
 COPY . /app/

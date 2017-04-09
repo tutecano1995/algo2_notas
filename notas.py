@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
+#!/usr/bin/env python3
 
 import os
 import gspread
@@ -58,7 +55,7 @@ def notas(padron):
         if padron == alumno[idx_padron]:
             return zip(headers, alumno)
 
-    raise IndexError("Padrón %s no encontrado" % padron)
+    raise IndexError("Padrón {} no encontrado".format(padron))
 
 
 if __name__ == "__main__":
