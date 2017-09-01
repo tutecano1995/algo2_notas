@@ -52,7 +52,7 @@ def notas(padron):
     idx_padron = headers.index(COL_PADRON)
 
     for alumno in filas:
-        if padron == alumno[idx_padron]:
+        if padron.lower() == alumno[idx_padron].lower():
             return zip(headers, alumno)
 
     raise IndexError("Padrón {} no encontrado".format(padron))
