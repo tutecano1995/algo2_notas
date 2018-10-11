@@ -46,7 +46,7 @@ def index():
 
     if form.validate_on_submit():
         padron = norm_field(form.padron)
-        email = norm_field(form.email)
+        email = norm_field(form.email).strip()
 
         if not notas.verificar(padron, email):
             flask.flash(
