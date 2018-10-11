@@ -32,7 +32,7 @@ def verificar(padron_web, email_web):
     alumnos = get_sheet(SHEET_ALUMNOS)
 
     for alumno in alumnos.get_all_records():
-        email = alumno.get(COL_EMAIL, "")
+        email = alumno.get(COL_EMAIL, "").strip()
         padron = str(alumno.get(COL_PADRON, ""))
 
         if not email or not padron:
