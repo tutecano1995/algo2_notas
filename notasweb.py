@@ -18,7 +18,7 @@ import sendmail
 
 app = flask.Flask(__name__)
 app.secret_key = os.environ["NOTAS_SECRET"]
-app.config.title = os.environ["NOTAS_COURSE_NAME"] + "- Consulta de Notas"
+app.config.title = os.environ["NOTAS_COURSE_NAME"] + " - Consulta de Notas"
 
 assert app.secret_key
 signer = itsdangerous.URLSafeSerializer(app.secret_key)
