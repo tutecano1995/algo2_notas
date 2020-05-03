@@ -4,15 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-gspread = "==0.2.5"
-httplib2 = "==0.9.1"
-oauth2client = "==1.4.11"
-webargs = "==1.2.0"
-flask = "==0.10.1"
+gspread = "==0.2.*"
+httplib2 = "==0.9.*"
+oauth2client = "==1.4.*"
+webargs = "==1.2.*"
+flask = "==0.10.*"
 flask-wtf = "==0.12"
-werkzeug = "==0.14.1"
-marshmallow = "==2.18.1"
-wtforms = "==2.2.1"
+werkzeug = "==0.14.*"
+marshmallow = "==2.18.*"
+wtforms = "==2.2.*"
 
 [dev-packages]
 python-dotenv = "*"
