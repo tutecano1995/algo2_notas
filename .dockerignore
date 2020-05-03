@@ -1,9 +1,0 @@
-*.pyc
-
-.git
-.dockerignore
-README.md
-
-.env
-.env2
-Dockerfile
