@@ -15,6 +15,7 @@ marshmallow = "==2.18.1"
 wtforms = "==2.2.1"
 
 [dev-packages]
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"
