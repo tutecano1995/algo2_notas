@@ -24,7 +24,7 @@ assert app.secret_key
 signer = itsdangerous.URLSafeSerializer(app.secret_key)
 
 
-class Formulario(flask_wtf.Form):
+class Formulario(flask_wtf.FlaskForm):
     """Pide el padrón y la dirección de correo.
     """
     padron = fields.StringField(
