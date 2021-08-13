@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "eb2da8a4255d588e6de3e8394d134a472b90d3d0eadc2b84ea2b4f2112a036e0"
+            "sha256": "0180255b8081fcea81d5c6223290b7ec2d62c4c0ac5cc54326bed1ba8310eefa"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -87,12 +87,21 @@
             "index": "pypi",
             "version": "==1.34.0"
         },
+        "google-auth-oauthlib": {
+            "hashes": [
+                "sha256:4ab58e6c3dc6ccf112f921fcced40e5426fba266768986ea502228488276eaba",
+                "sha256:b5a1ce7c617d247ccb2dfbba9d4bfc734b41096803d854a2c52592ae80150a67"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==0.4.5"
+        },
         "gspread": {
             "hashes": [
-                "sha256:098ef6b845780a23739b6ec088bfd5aa891df64292b47dc3e6d17952563fbb4e"
+                "sha256:236a0f24e3724b49bae4cbd5144ed036b0ae6feaf5828ad033eb2824bf05e5be",
+                "sha256:4933c3e2359e82698c0990f3b0e312627fcbf8fecc8bc81d26713f5860e20b48"
             ],
             "index": "pypi",
-            "version": "==0.2.5"
+            "version": "==4.0.1"
         },
         "httplib2": {
             "hashes": [
@@ -202,6 +211,14 @@
             "index": "pypi",
             "version": "==4.1.3"
         },
+        "oauthlib": {
+            "hashes": [
+                "sha256:42bf6354c2ed8c6acb54d971fce6f88193d97297e18602a3a886603f9d7730cc",
+                "sha256:8f0215fcc533dd8dd1bee6f4c412d4f0cd7297307d43ac61666389e3bc3198a3"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==3.1.1"
+        },
         "pyasn1": {
             "hashes": [
                 "sha256:014c0e9976956a08139dc0712ae195324a75e142284d5f87f1a87ee1b068a359",
@@ -245,6 +262,14 @@
             ],
             "index": "pypi",
             "version": "==2.26.0"
+        },
+        "requests-oauthlib": {
+            "hashes": [
+                "sha256:7f71572defaecd16372f9006f33c2ec8c077c3cfa6f5911a9a90202beb513f3d",
+                "sha256:b4261601a71fd721a8bd6d7aa1cc1d6a8a93b4a9f5e96626f8e4d91e8beeaa6a",
+                "sha256:fa6c47b933f01060936d87ae9327fead68768b69c6c9ea2109c48be30f2d4dbc"
+            ],
+            "version": "==1.3.0"
         },
         "rsa": {
             "hashes": [
