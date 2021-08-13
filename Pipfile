@@ -4,6 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+requests = "==2.26.*"
+google-auth = "==1.34.*"
 gspread = "==0.2.*"
 httplib2 = "==0.17.*"
 oauth2client = "~=4.1"
